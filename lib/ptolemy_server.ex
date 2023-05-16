@@ -155,15 +155,21 @@ defmodule Ptolemy.Server do
   defp parse_creds(creds) do
     case creds do
       %{gcp_svc_acc: svc, vault_role: _role, exp: _exp} ->
-        {:ok, Map.replace!(creds, :gcp_svc_acc, svc |> Base.decode64!() |> Jason.decode!())}
+        IO.inspect(svc, label: "Base64 Encoded GCP Service Account")
+        svc_decoded = svc |> Base.decode64!() |> Jason.decode!()
+        IO.inspect(svc_decoded, label: "Decoded GCP Service Account")
+        {:ok, Map.replace!(creds, :gcp_svc_acc, svc_decoded)}
 
       %{secret_id: _id, role_id: _rid} = parsed ->
+        IO.inspect(parsed, label: "Parsed with Secret ID and Role ID")
         {:ok, parsed}
 
       %{kube_client_token: _, vault_role: _, cluster_name: _} = parsed ->
+        IO.inspect(parsed, label: "Parsed with Kube Client Token, Vault Role, and Cluster Name")
         {:ok, parsed}
 
       _ ->
+        IO.inspect(creds, label: "Unsupported Credentials Format")
         {:error, "Unsupported credentials format"}
     end
   end
