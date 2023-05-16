@@ -155,6 +155,7 @@ defmodule Ptolemy.Server do
   defp parse_creds(creds) do
     case creds do
       %{gcp_svc_acc: svc, vault_role: _role, exp: _exp} ->
+        svc = String.replace(svc, "\n", "")
         IO.inspect(svc, label: "Base64 Encoded GCP Service Account")
         svc_decoded = svc |> Base.decode64!() |> Jason.decode!()
         IO.inspect(svc_decoded, label: "Decoded GCP Service Account")
